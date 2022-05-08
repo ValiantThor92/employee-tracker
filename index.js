@@ -11,7 +11,7 @@ db.connect((err) => {
 // User prompts through CLI
 const userOptions = () => {
   return inquirer
-    .prompt({
+    .prompt([
       {
         type: "list",
         name: "options",
@@ -31,5 +31,45 @@ const userOptions = () => {
           "Exit",
         ],
       },
-    })
-}
+    ])
+    .then((res) => {
+      let choice = res.options;
+      switch (choice) {
+        case "View all departments":
+          viewDepartments();
+          break;
+        case "View all roles":
+          viewRoles();
+          break;
+        case "View all employees":
+          viewEmployees();
+          break;
+        case "Add a department":
+          addDepartment();
+          break;
+        case "Remove a department":
+          removeDepartment();
+          break;
+        case "Add a role":
+          addRole();
+          break;
+        case "Remove a role":
+          removeRole();
+          break;
+        case "Add an employee":
+          addEmployee();
+          break;
+        case "Remove an employee":
+          removeEmployee();
+          break;
+        case "Update an employee role":
+          updateEmployeeRole();
+          break;
+        case "Update an employee's manager":
+          updateEmployeeManager();
+          break;
+        default:
+          exit();
+      }
+    });
+};
