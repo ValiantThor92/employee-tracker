@@ -73,3 +73,40 @@ const userOptions = () => {
       }
     });
 };
+
+const viewDepartments = () => {
+
+};
+const viewRoles = () => {
+
+};
+const viewEmployees = () => {
+
+};
+const addDepartment = () => {
+
+};
+const removeDepartment = () => {
+
+};
+const addRole = () => {
+
+};
+const removeRole = () => {
+
+};
+const addEmployee = () => {
+
+};
+const removeEmployee = () => {
+
+};
+const updateEmployeeRole = () => {
+
+};
+const updateEmployeeManager = () => {
+
+};
+const exit = () => {
+  
+};
