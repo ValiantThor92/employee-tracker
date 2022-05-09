@@ -78,7 +78,7 @@ const viewDepartments = () => { // View all departments
   db.query(`SELECT department.id, department.name AS department FROM department;`,
   (err, res) => {
     if (err) throw err;
-    console.tabe(res);
+    console.table(res);
     userOptions();
   });
 };
