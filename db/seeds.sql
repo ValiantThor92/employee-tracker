@@ -1,6 +1,7 @@
 use employees;
 
-INSERT INTO department (name)
+-- Main departments --
+INSERT INTO department (name) 
 VALUES
  ('Sales'),
  ('Finance'),
@@ -8,6 +9,7 @@ VALUES
  ('I.T.'),
  ('Production');
 
+-- Department Roles, salaries, and respective department ID's --
 INSERT INTO role (title, salary, department_id)
 VALUES
   ('Sales Manager', 100000, 1),
@@ -21,3 +23,16 @@ VALUES
   ('Production Foreman', 65000, 5),
   ('Production Staff', 45000, 5);
 
+-- Employee name, role ID's and manager ID's, NULL accounts for being a manager --
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES
+  ('Albus', 'Dumbledore', 1, NULL),
+  ('Frodo', 'Bagans', 2, 1),
+  ('Sandy', 'Cheeks', 3, NULL),
+  ('Patrick', 'Star', 4, 3),
+  ('Spongebob', 'SquarePants', 5, NULL),
+  ('Vol', 'Demort', 6, 5),
+  ('Obi-Wan', 'Kanobi', 7, NULL),
+  ('Eugene', 'Krabs', 8, 7),
+  ('Martha', 'Stewart', 9, NULL),
+  ('Snoop', 'Dog', 10, 9);
