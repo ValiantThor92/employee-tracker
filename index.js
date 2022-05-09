@@ -335,7 +335,54 @@ const removeEmployee = () => { // Remove employee from db
 };
 
 const updateEmployeeRole = () => { // Update employee role
-
+  db.query(`SELECT * FROM employee;`, (err, employeeRes) => {
+    if (err) throw err;
+    const employeeChoices = [];
+    employeeRes.forEach(({ id, first_name, last_name })=> {
+      employeeChoices.push({
+        name: first_name + " " + last_name,
+        value: id,
+      });
+    });
+    inquirer
+      .prompt({
+        type: "list",
+        name: "employeeId",
+        message: "Which employee would you like to update?",
+        choices: employeeChoices,
+      })
+      .then((res) => {
+        employeeId = res.employeeId;
+        db.query(`SELECT * FROM role`, (err, roleRes) => {
+          if (err) throw err;
+          const roleChoices = [];
+          roleRes.forEach(({ id, title }) => {
+            roleChoices.push({
+              name: title,
+              value: id,
+            });
+          });
+          inquirer
+            .prompt({
+              type: "list",
+              name: "roleId",
+              message: "New role:",
+              choice: roleChoices,
+            })
+            .then((res) => {
+              roleId = res.roleId;
+              db.query(`UPDATE employee SET role_id = ? where id = ?`,
+                [roleId, employeeId],
+                (err, res) => {
+                  if (err) throw err;
+                  console.log("Employee's role has been updated.");
+                  userOptions();
+                }
+              );
+            });
+        });
+      });
+  });
 };
 
 const updateEmployeeManager = () => { // Update employees manager
