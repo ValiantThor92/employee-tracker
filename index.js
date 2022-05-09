@@ -155,7 +155,48 @@ const removeDepartment = () => { // Remove a department
 };
 
 const addRole = () => { // Add employee role
-
+  const departments = [];
+  db.query(`SELECT department.id, department.name, FROM department;`,
+  (err, res) => {
+    if (err) throw err;
+    res.forEach((department) => {
+      let departmentChoice = {
+        name: department.name,
+        value: department.id,
+      };
+      departments.push(departmentChoice);
+    });
+    let addRolePrompt = [
+      {
+        type: "input",
+        name: "title",
+        message: "Role title:",
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "salary:",
+      },
+      {
+        type: "list",
+        name: "department",
+        message: "Department:",
+        choices: departments,
+      },
+    ];
+    inquirer.prompt(addRolePrompt).then((response) => {
+      const sql = `INSERT INTO ROLE (title, salary, department_id) VALUES (?)`;
+      db.query(
+        sql,
+        [[response.title, response.salary, response.department]],
+        (err, res) => {
+          if (err) throw err;
+          console.log(`Added ${response.title} to roles.`);
+          userOptions();
+        }
+      );
+    });
+  });
 };
 
 const removeRole = () => { // Remove employee role
