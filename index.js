@@ -228,11 +228,110 @@ const removeRole = () => { // Remove employee role
 };
 
 const addEmployee = () => { // Add new employee
-
+  return inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "first_name",
+        message: "Employee first name:",
+      },
+      {
+        type: "input",
+        name: "last_name",
+        message: "Employee last name:",
+      },
+    ])
+    .then((res) => {
+      let firstName = res.first_name;
+      let lastName = res.last_name;
+      db.query(`SELECT * FROM role`, (err, roleRes) => {
+        if (err) throw err;
+        const roleChoices = [];
+        roleRes.forEach(({ id, title }) => {
+          roleChoices.push({
+            name: title,
+            value: id,
+          });
+        });
+        inquirer
+          .prompt({
+            type: "list",
+            name: "roleId",
+            message: "Employee role:",
+            choices: roleChoices,
+          })
+          .then((res) => {
+            roleId = res.roleId;
+            db.query(`SELECT * FROM employee`, (err, employeeRes) => {
+              if (err) throw err;
+              const managerChoices = [
+                {
+                  name: "None",
+                  value: null,
+                },
+              ];
+              employeeRes.forEach(({ id, first_name, last_name }) => {
+                managerChoices.push({
+                  name: first_name + " " + last_name,
+                  value: id,
+                });
+              });
+              inquirer
+                .prompt({
+                  type: "list",
+                  name: "managerId",
+                  message: "Employee's manager:",
+                  choices: managerChoices,
+                })
+                .then((res) => {
+                  const sql = `INSERT INTO EMPLOYEES (first_name, last_name, role_id, manager_id) VALUES (?)`;
+                  db.query(
+                    sql,
+                    [[fistname, lastname, roleId, res.managerId]],
+                    (err, res) => {
+                      if (err) throw err;
+                      console.log(`Added ${firstName} ${lastName} as an employee.`);
+                      userOptions();
+                    }
+                  );
+                });
+            });
+          });
+      });
+    });
 };
 
-const removeEmployee = () => { // Remove employee
+const removeEmployee = () => { // Remove employee from db
+  db.query(`SELECT * FROM employee`, (err, employeeRes) => {
+    if (err) throw err;
+    const employeeChoices = [];
+    employeeRes.forEach(({ id, first_name, last_name }) => {
+      employeeChoices.push({
+        name: first_name + " " + last_name,
+        value: id,
+      });
+    });
 
+    inquirer
+      .prompt({
+        type: "list",
+        name: "employeeId",
+        message: "Which employee would you like to remove?",
+        choice: employeeChoices,
+      })
+      .then((res) => {
+        employeeId = res.employeeId;
+        db.query(
+          `DELETE FROM employee WHERE id = ?`,
+          employeeId,
+          (err, res) => {
+            if (err) throw err;
+            console.log("Employee has been removed.");
+            userOptions();
+          }
+        );
+      });
+  });
 };
 
 const updateEmployeeRole = () => { // Update employee role
