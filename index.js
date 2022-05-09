@@ -123,7 +123,35 @@ const addDepartment = () => { // Add a department
 };
 
 const removeDepartment = () => { // Remove a department
-
+  db.query(`SELECT * FROM department`, (err, departmentRes) => {
+    if (err) throw error;
+    const departmentChoices = [];
+    departmentRes.forEach(({ id, name }) => {
+      departmentChoices.push({
+        name: name,
+        value: id,
+      });
+    });
+    inquirer
+      .prompt({
+        type: "list",
+        name: "departmentId",
+        message: "What department would you like to remove?",
+        choices: departmentChoices,
+      })
+      .then((res) => {
+        departmentId = res.departmentId;
+        db.query(
+          `DELETE FROM department WHERE id = ?`,
+          departmentId,
+          (err, res) => {
+            if (err) throw err;
+            console.log("The department has been removed.");
+            userOptions();
+          }
+        );
+      });
+  });
 };
 
 const addRole = () => { // Add employee role
