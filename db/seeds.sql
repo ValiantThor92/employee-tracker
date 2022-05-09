@@ -1,6 +1,5 @@
-USE employees;
+use employees;
 
--- Main departments --
 INSERT INTO department (name) 
 VALUES
  ('Sales'),
@@ -9,7 +8,6 @@ VALUES
  ('I.T.'),
  ('Production');
 
--- Department Roles, salaries, and respective department ID's --
 INSERT INTO role (title, salary, department_id)
 VALUES
   ('Sales Manager', 100000, 1),
@@ -23,7 +21,6 @@ VALUES
   ('Production Foreman', 65000, 5),
   ('Production Staff', 45000, 5);
 
--- Employee name, role ID's and manager ID's, NULL accounts for being a manager --
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
   ('Albus', 'Dumbledore', 1, NULL),

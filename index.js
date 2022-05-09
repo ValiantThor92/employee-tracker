@@ -1,6 +1,7 @@
-const inquirer = require("inquirer");
-const db = require("./db/connection.js");
-const console = require("console.table");
+require("dotenv").config();
+const inquirer = require('inquirer');
+const db = require('./db');
+require('console.table');
 
 // Connect to the database
 db.connect((err) => {
@@ -75,12 +76,12 @@ const userOptions = () => {
 };
 
 const viewDepartments = () => { // View all departments
-  db.query(`SELECT department.id, department.name AS department FROM department;`,
-  (err, res) => {
-    if (err) throw err;
-    console.table(res);
-    userOptions();
-  });
+  db.displayDepartments()
+    .then(([rows]) => {
+      let department = rows;
+      console.table(department);
+    })
+    .then(() => userOptions());
 };
 
 const viewRoles = () => { // View all roles
