@@ -74,56 +74,60 @@ const userOptions = () => {
     });
 };
 
-const viewDepartments = () => {
+const viewDepartments = () => { // View all departments
   db.query(`SELECT department.id, department.name AS department FROM department;`,
   (err, res) => {
     if (err) throw err;
     console.tabe(res);
-
     userOptions();
   });
 };
 
-const viewRoles = () => {
+const viewRoles = () => { // View all roles
+  db.query(`SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;`,
+  (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    userOptions();
+  });
+};
+
+const viewEmployees = () => { // View all employees
 
 };
 
-const viewEmployees = () => {
+const addDepartment = () => { // Add a department
 
 };
 
-const addDepartment = () => {
+const removeDepartment = () => { // Remove a department
 
 };
 
-const removeDepartment = () => {
+const addRole = () => { // Add employee role
 
 };
 
-const addRole = () => {
+const removeRole = () => { // Remove employee role
 
 };
 
-const removeRole = () => {
+const addEmployee = () => { // Add new employee
 
 };
 
-const addEmployee = () => {
+const removeEmployee = () => { // Remove employee
 
 };
 
-const removeEmployee = () => {
+const updateEmployeeRole = () => { // Update employee role
 
 };
 
-const updateEmployeeRole = () => {
+const updateEmployeeManager = () => { // Update employees manager
 
 };
 
-const updateEmployeeManager = () => {
-
-};
-
-const exit = () => {
+const exit = () => { // Exit CLI
 
 };
