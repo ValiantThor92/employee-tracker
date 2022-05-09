@@ -75,38 +75,55 @@ const userOptions = () => {
 };
 
 const viewDepartments = () => {
+  db.query(`SELECT department.id, department.name AS department FROM department;`,
+  (err, res) => {
+    if (err) throw err;
+    console.tabe(res);
 
+    userOptions();
+  });
 };
+
 const viewRoles = () => {
 
 };
+
 const viewEmployees = () => {
 
 };
+
 const addDepartment = () => {
 
 };
+
 const removeDepartment = () => {
 
 };
+
 const addRole = () => {
 
 };
+
 const removeRole = () => {
 
 };
+
 const addEmployee = () => {
 
 };
+
 const removeEmployee = () => {
 
 };
+
 const updateEmployeeRole = () => {
 
 };
+
 const updateEmployeeManager = () => {
 
 };
+
 const exit = () => {
-  
+
 };
