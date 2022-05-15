@@ -221,30 +221,6 @@ const addRole = () => {
   });
 };
 
-const removeRole = () => {
-  // Remove employee role
-  db.displayRoles().then(([rows]) => {
-    let roles = rows;
-    const roleChoices = roles.map(({ id, job_title }) => ({
-      name: job_title,
-      value: id,
-    }));
-
-    inquirer
-      .prompt([
-        {
-          type: "list",
-          name: "roleId",
-          message: "Which role would you like to remove?",
-          choices: roleChoices,
-        },
-      ])
-      .then((res) => db.deleteRole(res.role))
-      .then(() => console.log("Removed role from the database successfully"))
-      .then(() => userOptions());
-  });
-};
-
 const addEmployee = () => {
   // Add new employee
   inquirer
@@ -319,28 +295,6 @@ const addEmployee = () => {
     });
 };
 
-const removeEmployee = () => {
-  // Remove employee from db
-  db.displayEmployees().then(([rows]) => {
-    let employees = rows;
-    const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
-      name: `${first_name} ${last_name}`,
-      value: id,
-    }));
-
-    inquirer
-      .prompt({
-        type: "list",
-        name: "employee",
-        message: "Which employee would you like to remove?",
-        choice: employeeChoices,
-      })
-      .then((res) => db.deleteEmployee(res.employee))
-      .then(() => console.log("Employee has been removed from database"))
-      .then(() => userOptions());
-  });
-};
-
 const updateEmployeeRole = () => {
   // Update employee role
   db.displayEmployees().then(([rows]) => {
@@ -379,50 +333,6 @@ const updateEmployeeRole = () => {
             ])
             .then((res) => db.updateEmployeeRole(employee, res.role))
             .then(() => console.log("Employee's role has been updated."))
-            .then(() => userOptions());
-        });
-      });
-  });
-};
-
-const updateEmployeeManager = () => {
-  // Update employees manager
-  db.displayEmployees().then(([rows]) => {
-    let employees = rows;
-    const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
-      name: `${first_name} ${last_name}`,
-      value: id,
-    }));
-    inquirer
-      .prompt({
-        type: "list",
-        name: "employeeId",
-        message: "Which employee would you like to update?",
-        choices: employeeChoices,
-      })
-      .then((res) => {
-        let employee = res.employee;
-        db.displayManagers(employee).then(([rows]) => {
-          let managers = rows;
-          const managerChoices = managers.map(
-            ({ id, first_name, last_name }) => ({
-              name: `${first_name} ${last_name}`,
-              value: id,
-            })
-          );
-
-          inquirer
-            .prompt([
-              {
-                type: "list",
-                name: "managerId",
-                message:
-                  "Which manager do you want to assign to the selected employee?",
-                choices: managerChoices,
-              },
-            ])
-            .then((res) => db.updateEmployeeManager(employee, res.manager))
-            .then(() => console.log("Updated employee's manager successfully!"))
             .then(() => userOptions());
         });
       });
