@@ -22,3 +22,4 @@ A command-line application that manages a company's employee database.
 ## Demo
 
 ![Demo](media/demo.gif)
+![link](https://drive.google.com/file/d/1PeAl6FVcAuQNuKvMQMYnc9MPuwD4ShfG/view)
