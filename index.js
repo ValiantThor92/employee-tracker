@@ -29,33 +29,17 @@ const userOptions = () => {
           name: "Add a department",
           value: "addDepartment",
         },
-        { 
-          name: "Remove a department",
-          value: "removeDepartment",
-        },
         {
           name: "Add a role",
           value: "addRole"
         },
         {
-          name: "Remove a role",
-          value: "removeRole"
-        },
-        {
           name: "Add an employee",
           value: "addEmployee"
-        },
-        { 
-          name: "Remove an employee",
-          value: "removeEmployee"
         },
         {
           name: "Update an employee role",
           value: "updateEmployeeRole"
-        },
-        {
-          name: "Update an employee's manager",
-          value: "updateEmployeeManager"
         },
         {
           name: "Exit",
@@ -79,26 +63,14 @@ const userOptions = () => {
       case "addDepartment":
         addDepartment();
         break;
-      case "removeDepartment":
-        removeDepartment();
-        break;
       case "addRole":
         addRole();
-        break;
-      case "removeRole":
-        removeRole();
         break;
       case "addEmployee":
         addEmployee();
         break;
-      case "removeEmployee":
-        removeEmployee();
-        break;
       case "updateEmployeeRole":
         updateEmployeeRole();
-        break;
-      case "updateEmployeeManager":
-        updateEmployeeManager();
         break;
       default:
         exit();
@@ -109,9 +81,7 @@ const userOptions = () => {
 const displayDepartments = () => {
   // View all departments
   db.displayDepartments()
-    .then(([rows]) => {
-      let departments = rows;
-      console.log('\n');
+    .then(([departments]) => {
       console.table(departments);
     })
     .then(() => userOptions());
@@ -120,9 +90,7 @@ const displayDepartments = () => {
 const displayRoles = () => {
   // View all roles
   db.displayRoles()
-    .then(([rows]) => {
-      let roles = rows;
-      console.log('\n');
+    .then(([roles]) => {
       console.table(roles);
     })
     .then(() => userOptions());
@@ -131,9 +99,7 @@ const displayRoles = () => {
 const displayEmployees = () => {
   // View all employees
   db.displayEmployees()
-    .then(([rows]) => {
-      let employees = rows;
-      console.log('\n');
+    .then(([employees]) => {
       console.table(employees);
     })
     .then(() => userOptions());
@@ -145,52 +111,26 @@ const addDepartment = () => {
     .prompt([
       {
         type: "input",
-        name: "newDept",
+        name: "name",
         message: "Department name:",
       },
     ])
-    .then(res => {
-      let name = res.newDept;
-      db.addDepartment(name)
+    .then((department) => {
+      db.addDepartment(department)
         .then(() =>
-          console.log(`Added ${name} to the database successfully`)
+          console.log(`Added ${department.name} to the database successfully`)
         )
         .then(() => userOptions());
     });
-};
-
-const removeDepartment = () => {
-  // Remove a department
-  db.displayDepartments().then(([rows]) => {
-    let departments = rows;
-    const departmentChoices = departments.map(({ id, department }) => ({
-      name: department,
-      value: id,
-    }));
-
-    inquirer
-      .prompt([
-        {
-          type: "list",
-          name: "departmentId",
-          message: "What department would you like to remove?",
-          choices: departmentChoices,
-        },
-      ])
-      .then((res) => db.removeDepartment(res.department))
-      .then(() => console.log("The department has been removed."))
-      .then(() => userOptions());
-  });
 };
 
 const addRole = () => {
   // Add employee role
   db.displayDepartments().then(([rows]) => {
     let departments = rows;
-    const departmentNames = departments.map(({ id, department }) => ({
-      name: department,
-      value: id,
-    }));
+    let departmentChoices = departments.map(({ id, department }) => {
+      return { value: id, name: department };
+    });
 
     inquirer
       .prompt([
@@ -206,15 +146,15 @@ const addRole = () => {
         },
         {
           type: "list",
-          name: "department",
+          name: "department_id",
           message: "Department:",
-          choices: departmentNames,
+          choices: departmentChoices,
         },
       ])
-      .then(res => {
-        db.addRole(res)
+      .then((role) => {
+        db.addRole(role)
           .then(() =>
-            console.log(`Added ${res.title} to the database successfully`)
+            console.log(`Added ${role.title} to the database successfully`)
           )
           .then(() => userOptions());
       });
@@ -240,10 +180,9 @@ const addEmployee = () => {
       let first = res.first_name;
       let last = res.last_name;
 
-      db.displayRoles().then(([rows]) => {
-        let role = rows;
-        const roleChoices = role.map(({ id, job_title }) => ({
-          name: job_title,
+      db.displayRoles().then(([roles]) => {
+        const roleChoices = roles.map(({ id, role }) => ({
+          name: role,
           value: id,
         }));
         inquirer
@@ -257,12 +196,10 @@ const addEmployee = () => {
             let role = res.roleId;
             db.displayEmployees().then(([rows]) => {
               let employees = rows;
-              const managerChoices = employees.map(
-                ({ id, first_name }) => ({
-                  name: first_name,
+              const managerChoices = employees.map(({ id, employee }) => ({
+                  name: employee,
                   value: id,
-                })
-              );
+              }));
               // add 'none' to manager choices
               managerChoices.unshift({ name: "None", value: null });
 
@@ -297,12 +234,10 @@ const addEmployee = () => {
 
 const updateEmployeeRole = () => {
   // Update employee role
-  db.displayEmployees().then(([rows]) => {
-    let employees = rows;
-    const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
-      name: `${first_name} ${last_name}`,
-      value: id,
-    }));
+  db.displayEmployees().then(([employees]) => {
+    const employeeChoices = employees.map(({ id, employee }) => {
+      return { name: employee, value: id };
+    });
 
     inquirer
       .prompt([
@@ -313,14 +248,13 @@ const updateEmployeeRole = () => {
           choices: employeeChoices
         },
       ])
-      .then((res) => {
-        let employee = res.employee;
-        db.displayRoles().then(([rows]) => {
-          let roles = rows;
-          const roleChoices = roles.map(({ id, job_title }) => ({
-            name: job_title,
-            value: id,
-          }));
+      .then(res => {
+        let employeeId = res.employee;
+        db.displayRoles().then(([roles]) => {
+          const roleChoices = roles.map(({ id, role }) => ({
+            name: role,
+            value: id
+          }))
 
           inquirer
             .prompt([
@@ -328,12 +262,18 @@ const updateEmployeeRole = () => {
                 type: "list",
                 name: "roleId",
                 message: "New role:",
-                choice: roleChoices,
+                choices: roleChoices,
               },
             ])
-            .then((res) => db.updateEmployeeRole(employee, res.role))
-            .then(() => console.log("Employee's role has been updated."))
-            .then(() => userOptions());
+            .then(({ roleId }) => {
+              db.updateEmployeeRole(employeeId, roleId);
+            })
+            .then(() => {
+              console.log("Employee's role has been updated.");
+            })
+            .then(() => {
+              userOptions();
+            });
         });
       });
   });
